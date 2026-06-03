@@ -75,6 +75,19 @@ Make sure you have Node.js and npm installed:
     ```bash
     npm run start
     ```
+*   **Testing on Mobile / Local Network**: To open and test the application on another device (such as your mobile phone) connected to the same Wi-Fi network, serve the application binding it to all interfaces:
+    ```bash
+    npx ionic serve --host=0.0.0.0
+    ```
+    To access the server from your other device:
+    1. Find your host machine's local IP address on the Wi-Fi network. On macOS, run:
+       ```bash
+       ipconfig getifaddr en0
+       ```
+    2. On your mobile phone or tablet, open a browser and navigate to:
+       ```text
+       http://<YOUR_LOCAL_IP>:8100
+       ```
 *   **Production Build**: Compiles optimized production bundle output into `www/`:
     ```bash
     npm run build
