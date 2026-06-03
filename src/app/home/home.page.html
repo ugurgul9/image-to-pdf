@@ -1,0 +1,228 @@
+@if (appState() !== 'cropping') {
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-title>
+        DocScan
+      </ion-title>
+      @if (appState() !== 'welcome') {
+        <ion-buttons slot="end">
+          <ion-button (click)="isExportOpen() ? isExportOpen.set(false) : reset()" color="danger" id="btn-header-reset" aria-label="Cancel current scan batch and reset">
+            <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      }
+    </ion-toolbar>
+  </ion-header>
+}
+
+<ion-content [fullscreen]="true" [class.no-scroll]="appState() === 'cropping'">
+  <!-- Hidden standard file input for web/desktop browser fallback -->
+  <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display: none;" id="input-file-fallback">
+
+  <!-- MODULAR EXPORT OVERLAY MODAL -->
+  <app-export-modal
+    #exportModal
+    [isOpen]="isExportOpen()"
+    [pages]="scanService.pages()"
+    (closeModal)="isExportOpen.set(false)"
+    (resetRequest)="reset()">
+  </app-export-modal>
+
+  <!-- STATE 1: WELCOME SCREEN -->
+  @if (appState() === 'welcome') {
+    <div class="welcome-container" id="section-welcome">
+      <div class="hero-section">
+        <div class="glow-orb" aria-hidden="true"></div>
+        <div class="scan-frame">
+          <div class="scanner-laser" aria-hidden="true"></div>
+          <ion-icon name="document-text-outline" class="hero-icon" aria-hidden="true"></ion-icon>
+        </div>
+        <h1 class="gradient-text">DocScan</h1>
+        <p class="hero-subtitle">Instantly capture, crop, and convert physical papers into high-resolution borderless PDFs.</p>
+      </div>
+
+      <div class="action-grid">
+        <ion-button expand="block" size="large" class="gradient-btn margin-bottom" (click)="captureImage('camera')" id="btn-capture-camera" aria-label="Take a photo of a document using your camera">
+          <ion-icon slot="start" name="camera-outline" aria-hidden="true"></ion-icon>
+          Take Photo
+        </ion-button>
+        
+        <ion-button expand="block" size="large" fill="outline" class="secondary-gradient-btn" (click)="captureImage('photos')" id="btn-import-gallery" aria-label="Import document photo from device library">
+          <ion-icon slot="start" name="image-outline" aria-hidden="true"></ion-icon>
+          Import from Gallery
+        </ion-button>
+
+        <div class="fallback-hint">
+          <span (click)="triggerFileSelect()" id="lnk-file-fallback" role="button" tabindex="0" aria-label="Or select a local image file from your device files">Or select a local image file</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- STATE 2: CROPPING WORKSPACE -->
+  @if (appState() === 'cropping') {
+    <div class="fullscreen-workspace" id="section-cropping">
+      <!-- Floating Immersive Top Actions -->
+      <div class="floating-header" role="toolbar" aria-label="Cropping options">
+        <button class="floating-btn cancel-btn" (click)="reset()" id="btn-cancel-crop" title="Cancel cropping and go back" aria-label="Cancel cropping and return to home">
+          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+        </button>
+        <button class="floating-btn save-btn" (click)="cropPerspective()" [disabled]="isGenerating()" id="btn-confirm-crop" title="Confirm crop boundary" aria-label="Warp perspective and crop current page">
+          @if (!isGenerating()) {
+            <span>
+              <ion-icon name="crop-outline" aria-hidden="true"></ion-icon>
+              @if (scanService.currentPageIndex() === scanService.pages().length - 1) {
+                Crop & Preview
+              } @else {
+                Next Page
+              }
+            </span>
+          }
+          @if (isGenerating()) {
+            <ion-spinner name="crescent" aria-label="Warping perspective"></ion-spinner>
+          }
+        </button>
+      </div>
+
+      <!-- Modular Perspective Cropping Grid -->
+      @if (scanService.currentPage()) {
+        <app-perspective-cropper
+          [page]="scanService.currentPage()!"
+          (cornersChange)="onCornersUpdated($event)">
+        </app-perspective-cropper>
+      }
+
+      <!-- Bottom Crop State Multi-Page Nav Bar -->
+      <div class="crop-navbar glass-card" role="navigation" aria-label="Page navigation">
+        <button class="nav-arrow-btn" [disabled]="scanService.currentPageIndex() === 0" (click)="scanService.selectCurrentPage(scanService.currentPageIndex() - 1, false, appState())" id="btn-crop-prev" aria-label="Navigate to previous page">
+          <ion-icon name="arrow-back"></ion-icon>
+        </button>
+
+        <button class="nav-action-btn add-page-btn" (click)="captureImage('camera')" id="btn-crop-add" aria-label="Capture and append another page to batch">
+          <ion-icon name="add-outline"></ion-icon>
+        </button>
+
+        <div class="crop-page-indicator" role="status">
+          Page {{ scanService.currentPageIndex() + 1 }} of {{ scanService.pages().length }}
+        </div>
+
+        <button class="nav-action-btn delete-page-btn" (click)="scanService.deletePage(scanService.currentPageIndex(), appState(), reset.bind(this))" id="btn-crop-delete" aria-label="Delete current sheet from batch">
+          <ion-icon name="trash-outline"></ion-icon>
+        </button>
+
+        <button class="nav-arrow-btn" [disabled]="scanService.currentPageIndex() === scanService.pages().length - 1" (click)="scanService.selectCurrentPage(scanService.currentPageIndex() + 1, false, appState())" id="btn-crop-next" aria-label="Navigate to next page">
+          <ion-icon name="arrow-forward"></ion-icon>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- STATE 3: PREVIEW AND EXPORT -->
+  @if (appState() === 'preview') {
+    <div class="workspace-container" id="section-preview">
+      <div class="section-header">
+        <h2>Batch Review</h2>
+        <p>Customize filter presets on sheets and export your compiled multi-page document.</p>
+      </div>
+
+      <!-- Focused Cropped Result Preview -->
+      @if (scanService.currentPage()) {
+        <div class="preview-frame glass-card">
+          @for (page of [scanService.currentPage()]; track page?.id) {
+            @if (page?.croppedUri) {
+              <img [src]="page?.croppedUri" alt="Cropped sheet focused result preview" id="preview-cropped-image" />
+            }
+          }
+          
+          <!-- Page preset filter segment panel -->
+          <div class="filter-panel">
+            <ion-segment [value]="scanService.currentPage()?.filter || 'original'" (ionChange)="updatePageFilter($any($event).target.value)" mode="ios" aria-label="Aesthetic document filters">
+              <ion-segment-button value="original">
+                <ion-label>Original</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="magic">
+                <ion-label>Magic Color</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="grayscale">
+                <ion-label>Photocopy</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
+        </div>
+      }
+
+      <!-- Page Carousel Slideshow Grid -->
+      <app-sheets-carousel
+        [pages]="scanService.pages()"
+        [currentIndex]="scanService.currentPageIndex()"
+        (selectPage)="scanService.selectCurrentPage($event, false, appState())"
+        (deletePage)="scanService.deletePage($event, appState(), reset.bind(this))"
+        (movePageLeft)="scanService.movePageLeft($event)"
+        (movePageRight)="scanService.movePageRight($event)"
+        (addPage)="captureImage('camera')">
+      </app-sheets-carousel>
+
+      <!-- PDF Options Card -->
+      <div class="options-card glass-card">
+        <h3>PDF Compilation Settings</h3>
+
+        <!-- Document Name Input -->
+        <div class="input-group">
+          <label for="doc-name">File Name</label>
+          <div class="input-wrapper">
+            <ion-icon name="document-text-outline" class="input-icon" aria-hidden="true"></ion-icon>
+            <input type="text" id="doc-name" [(ngModel)]="fileName" placeholder="document_scan" aria-label="Document PDF export filename" />
+            <span class="input-ext">.pdf</span>
+          </div>
+        </div>
+
+        <!-- Page Size Selector -->
+        <div class="input-group">
+          <label>Page Layout Mode</label>
+          <ion-segment [(ngModel)]="pageSize" mode="ios" aria-label="Standard sheet page sizing presets">
+            <ion-segment-button value="borderless" id="segment-borderless" aria-label="Fit PDF size exactly to document bounds">
+              <ion-label>Borderless</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="a4" id="segment-a4" aria-label="Fit document proportionally centered on standard A4 page">
+              <ion-label>A4 Sheet</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="letter" id="segment-letter" aria-label="Fit document proportionally centered on standard US Letter page">
+              <ion-label>Letter</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </div>
+      </div>
+
+      <!-- Export Actions -->
+      <ion-row class="workspace-actions">
+        <ion-col size="4">
+        <ion-button expand="block" class="recrop-btn nav-btn" (click)="backToCropping()" id="btn-recrop" aria-label="Go back to cropping page to adjust edges">
+            <ion-icon slot="start" name="arrow-back-outline" aria-hidden="true"></ion-icon>
+            Recrop
+          </ion-button>
+        </ion-col>
+        <ion-col size="4">
+          <ion-button expand="block" class="secondary-gradient-btn nav-btn" (click)="exportImages()" [disabled]="isGenerating()" id="btn-export-jpegs" aria-label="Download all pages as high resolution images">
+            <ion-icon slot="start" name="image-outline" aria-hidden="true"></ion-icon>
+            PNGs
+          </ion-button>
+        </ion-col>
+        <ion-col size="4">
+          <ion-button expand="block" class="gradient-btn" (click)="generatePdf()" [disabled]="isGenerating()" id="btn-export-pdf" aria-label="Compile scans and download PDF document">
+            @if (!isGenerating()) {
+              <span>
+                <ion-icon slot="start" name="download-outline" aria-hidden="true"></ion-icon>
+                PDF
+              </span>
+            }
+            @if (isGenerating()) {
+              <span class="generating-spinner">
+                <ion-spinner name="crescent" aria-label="Compiling PDF"></ion-spinner>
+              </span>
+            }
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+  }
+</ion-content>

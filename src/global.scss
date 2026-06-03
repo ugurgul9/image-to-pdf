@@ -1,0 +1,134 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+@import '@ionic/angular/css/palettes/dark.system.css';
+
+
+/* Global Font & Theme overrides */
+:root {
+  --ion-font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --ion-color-primary: #6366f1;
+  --ion-color-primary-rgb: 99, 102, 241;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #5758d4;
+  --ion-color-primary-tint: #7375f2;
+
+  --ion-color-secondary: #06b6d4;
+  --ion-color-secondary-rgb: 6, 182, 212;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #059fa2;
+  --ion-color-secondary-tint: #22c5de;
+}
+
+body {
+  font-family: var(--ion-font-family);
+  background: #0f172a; /* Deep obsidian background */
+  color: #f8fafc;
+}
+
+/* Premium Glassmorphic Card */
+.glass-card {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  padding: 24px;
+  margin: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 15px 35px rgba(99, 102, 241, 0.15);
+}
+
+/* Vibrant Gradient Button */
+.gradient-btn {
+  --background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%) !important;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: transform 0.2s ease;
+}
+
+.gradient-btn:active {
+  transform: scale(0.97);
+}
+
+.secondary-gradient-btn {
+  --background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%) !important;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.secondary-gradient-btn:active {
+  transform: scale(0.97);
+}
+
+
+/* Premium Headers */
+ion-header {
+  ion-toolbar {
+    --background: rgba(15, 23, 42, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    
+    ion-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+}
+
+/* Floating Action Customization */
+ion-fab-button {
+  --background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+  --box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+

@@ -1,0 +1,77 @@
+<div class="warp-container" #workspaceContainer id="cropping-workspace-board">
+  <img #imageElement [src]="page().rawUri" (load)="onImageLoaded()" alt="Skewed document editing preview" class="warp-image" />
+  
+  <!-- Circular Magnifying Glass Floating Above Active Corner Point -->
+  <div class="magnifier-glass" 
+       [class.active]="activeHandle() !== null"
+       [style.left.px]="magnifierX()" 
+       [style.top.px]="magnifierY()"
+       id="magnifier-viewer"
+       aria-hidden="true">
+    <canvas #magnifierCanvas width="110" height="110"></canvas>
+    <div class="magnifier-crosshair"></div>
+  </div>
+  
+  <!-- High-performance SVG Selection Layer -->
+  @if (svgPolygonPoints()) {
+    <svg class="svg-layer" aria-hidden="true">
+      <!-- Dim outer boundary dim mask -->
+      <path [attr.d]="svgMaskPath()" class="svg-dim-overlay" />
+      <!-- Transparent selected polygon cut -->
+      <polygon [attr.points]="svgPolygonPoints()" class="svg-selection-poly" />
+    </svg>
+  }
+
+  <!-- Draggable Corner Handles (NW, NE, SE, SW) with WCAG ARIA support -->
+  <div class="corner-handle handle-tl" 
+       [style.left.%]="corners()[0].x * 100" 
+       [style.top.%]="corners()[0].y * 100"
+       (mousedown)="onDragStart($event, 0)" 
+       (touchstart)="onDragStart($event, 0)"
+       id="handle-tl"
+       role="slider"
+       aria-label="Top-Left Perspective Crop Corner Handle"
+       aria-valuemin="-5"
+       aria-valuemax="105"
+       [attr.aria-valuenow]="corners()[0].x * 100">
+  </div>
+  
+  <div class="corner-handle handle-tr" 
+       [style.left.%]="corners()[1].x * 100" 
+       [style.top.%]="corners()[1].y * 100"
+       (mousedown)="onDragStart($event, 1)" 
+       (touchstart)="onDragStart($event, 1)"
+       id="handle-tr"
+       role="slider"
+       aria-label="Top-Right Perspective Crop Corner Handle"
+       aria-valuemin="-5"
+       aria-valuemax="105"
+       [attr.aria-valuenow]="corners()[1].x * 100">
+  </div>
+
+  <div class="corner-handle handle-br" 
+       [style.left.%]="corners()[2].x * 100" 
+       [style.top.%]="corners()[2].y * 100"
+       (mousedown)="onDragStart($event, 2)" 
+       (touchstart)="onDragStart($event, 2)"
+       id="handle-br"
+       role="slider"
+       aria-label="Bottom-Right Perspective Crop Corner Handle"
+       aria-valuemin="-5"
+       aria-valuemax="105"
+       [attr.aria-valuenow]="corners()[2].x * 100">
+  </div>
+
+  <div class="corner-handle handle-bl" 
+       [style.left.%]="corners()[3].x * 100" 
+       [style.top.%]="corners()[3].y * 100"
+       (mousedown)="onDragStart($event, 3)" 
+       (touchstart)="onDragStart($event, 3)"
+       id="handle-bl"
+       role="slider"
+       aria-label="Bottom-Left Perspective Crop Corner Handle"
+       aria-valuemin="-5"
+       aria-valuemax="105"
+       [attr.aria-valuenow]="corners()[3].x * 100">
+  </div>
+</div>

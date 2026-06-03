@@ -1,0 +1,74 @@
+@if (isOpen()) {
+  <div class="success-overlay" id="export-modal" aria-live="assertive" role="dialog" aria-label="Export Progress Modal">
+    <div class="success-card glass-card">
+      <!-- Modal Header Toolbar with Close Button -->
+      <div class="modal-header">
+        <span class="modal-title">
+          @if (exportStep() === 'processing') {
+            Exporting...
+          } @else {
+            Ready to View
+          }
+        </span>
+        <button class="modal-close-btn" (click)="closeExportModal()" aria-label="Close Export Modal" id="btn-modal-header-close">
+          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+
+      <!-- Export Settings / Processing State -->
+      @if (exportStep() === 'processing') {
+        <div class="modal-spinner-wrapper">
+          <ion-spinner name="crescent" color="secondary" aria-label="Processing conversion"></ion-spinner>
+        </div>
+        <h2>Converting Document...</h2>
+        <p class="status-desc">
+          @if (exportType() === 'pdf') {
+            Compiling scanned pages into a premium PDF...
+          } @else {
+            Rendering high-resolution PNG sheets...
+          }
+        </p>
+      }
+
+      <!-- Success State -->
+      @if (exportStep() === 'success') {
+        <div class="checkmark-circle scale-up">
+          <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>Conversion Complete!</h2>
+        <p class="status-desc">
+          @if (exportType() === 'pdf') {
+            Your document PDF is ready to view.
+          } @else {
+            Your high-res images have been exported successfully.
+          }
+        </p>
+        
+        <div class="modal-actions">
+          @if (exportType() === 'pdf' && compiledPdfUrl()) {
+            <ion-button expand="block" class="gradient-btn" (click)="openCompiledFile()" id="btn-modal-open" aria-label="Open PDF file in a new tab">
+              <ion-icon slot="start" name="document-text-outline" aria-hidden="true"></ion-icon>
+              Open PDF
+            </ion-button>
+          }
+          @if (exportType() === 'png' && compiledPngUrls().length > 0) {
+            <ion-button expand="block" class="gradient-btn" (click)="openCompiledFile()" id="btn-modal-open-png" aria-label="Open first page image in a new tab">
+              <ion-icon slot="start" name="image-outline" aria-hidden="true"></ion-icon>
+              Open Page 1
+            </ion-button>
+          }
+          
+          <ion-button expand="block" fill="outline" color="light" class="secondary-gradient-btn" (click)="closeExportModal()" id="btn-modal-back" aria-label="Go back to adjust filters and sheets">
+            <ion-icon slot="start" name="arrow-back-outline" aria-hidden="true"></ion-icon>
+            Go Back & Adjust
+          </ion-button>
+          
+          <ion-button expand="block" fill="clear" color="danger" (click)="resetAll()" id="btn-modal-close" aria-label="Reset scanner and start new batch">
+            <ion-icon slot="start" name="refresh-outline" aria-hidden="true"></ion-icon>
+            Reset & Start New
+          </ion-button>
+        </div>
+      }
+    </div>
+  </div>
+}

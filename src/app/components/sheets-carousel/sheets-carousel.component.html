@@ -1,0 +1,43 @@
+<div class="carousel-container">
+  <h3>Sheets Batch List ({{ pages().length }} pages)</h3>
+  <div class="carousel-scroller">
+    @for (page of pages(); track page.id; let i = $index) {
+      <div class="carousel-item" [class.active]="i === currentIndex()" id="carousel-item-{{ i }}">
+        <!-- Mini thumbnail -->
+        <div class="thumbnail-wrapper" (click)="selectPage.emit(i)">
+          @if (page.croppedUri) {
+            <img [src]="page.croppedUri" alt="Page {{ i + 1 }} thumbnail">
+          } @else {
+            <div class="thumbnail-placeholder">
+              <div class="thumbnail-crescent-wrapper">
+                <div class="crescent-loader"></div>
+              </div>
+            </div>
+          }
+          <div class="page-badge">Page {{ i + 1 }}</div>
+        </div>
+
+        <!-- Shifting sort controls -->
+        <div class="reorder-controls">
+          <button class="shift-btn" [disabled]="i === 0" (click)="movePageLeft.emit(i)" aria-label="Shift page left">
+            <ion-icon name="arrow-back" aria-hidden="true"></ion-icon>
+          </button>
+          <button class="shift-btn delete-btn" (click)="deletePage.emit(i)" aria-label="Delete this page">
+            <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+          </button>
+          <button class="shift-btn" [disabled]="i === pages().length - 1" (click)="movePageRight.emit(i)" aria-label="Shift page right">
+            <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Quick Append trigger card -->
+    <div class="carousel-item add-more-item" (click)="addPage.emit()" id="btn-preview-add-more">
+      <div class="thumbnail-wrapper placeholder-wrapper">
+        <ion-icon name="add-outline" class="add-icon" aria-hidden="true"></ion-icon>
+        <span>Add Sheet</span>
+      </div>
+    </div>
+  </div>
+</div>

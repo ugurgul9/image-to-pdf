@@ -1,0 +1,183 @@
+/* Scoped Carousel Thumbnail scroll layout */
+.carousel-container {
+  margin: 0 0 24px 0;
+
+  h3 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 0 0 12px 4px;
+  }
+}
+
+.carousel-scroller {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 4px 4px 16px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+  }
+}
+
+.carousel-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.thumbnail-wrapper {
+  position: relative;
+  width: 90px;
+  height: 120px;
+  border-radius: 14px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .page-badge {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.85);
+    color: #cbd5e1;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 4px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
+
+.carousel-item.active {
+  .thumbnail-wrapper {
+    border-color: #a855f7;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.5), 0 8px 20px rgba(0, 0, 0, 0.4);
+    transform: scale(1.04);
+  }
+}
+
+.carousel-item.add-more-item {
+  .thumbnail-wrapper.placeholder-wrapper {
+    border: 2px dashed rgba(168, 85, 247, 0.4);
+    background: rgba(168, 85, 247, 0.03);
+    color: #a855f7;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    
+    .add-icon {
+      font-size: 2rem;
+      filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.4));
+    }
+
+    span {
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    &:active {
+      background: rgba(168, 85, 247, 0.08);
+      transform: scale(0.96);
+    }
+  }
+}
+
+/* Shifting Page Sort controls */
+.reorder-controls {
+  display: flex;
+  gap: 4px;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 3px 6px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.shift-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:disabled {
+    color: rgba(255, 255, 255, 0.15);
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):active {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+}
+
+.shift-btn.delete-btn {
+  color: #ef4444;
+
+  &:active {
+    background: rgba(239, 68, 68, 0.15);
+  }
+}
+
+/* Thumbnail Placeholder Spinner */
+.thumbnail-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.thumbnail-crescent-wrapper {
+  width: 24px;
+  height: 24px;
+  position: relative;
+}
+
+.crescent-loader {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #a855f7;
+  border-left-color: #a855f7;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
