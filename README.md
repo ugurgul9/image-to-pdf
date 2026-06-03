@@ -55,9 +55,9 @@ graph TD
 ## Getting Started
 
 ### Prerequisites
-Make sure you have Node.js and npm installed:
+Make sure you have Node.js and npm or yarn installed:
 *   [Node.js](https://nodejs.org/) (v18+ recommended)
-*   [Ionic CLI](https://ionicframework.com/docs/intro/cli) (optional, `npx` is supported)
+*   [Ionic CLI](https://ionicframework.com/docs/intro/cli) (optional, `npx` / `yarn` is supported)
 
 ### Installation
 1. Clone the repository:
@@ -65,19 +65,31 @@ Make sure you have Node.js and npm installed:
    git clone git@github.com:ugurgul9/image-to-pdf.git
    cd image-to-pdf
    ```
-2. Install npm dependencies:
+2. Install dependencies:
    ```bash
+   # Using npm
    npm install
+
+   # Using yarn
+   yarn install
    ```
 
 ### Development Scripts
 *   **Run Development Server**: Runs the app locally at `http://localhost:8100`:
     ```bash
+    # Using npm
     npm run start
+
+    # Using yarn
+    yarn start
     ```
 *   **Testing on Mobile / Local Network**: To open and test the application on another device (such as your mobile phone) connected to the same Wi-Fi network, serve the application binding it to all interfaces:
     ```bash
+    # Using npm/npx
     npx ionic serve --host=0.0.0.0
+
+    # Using yarn
+    yarn ionic serve --host=0.0.0.0
     ```
     To access the server from your other device:
     1. Find your host machine's local IP address on the Wi-Fi network. On macOS, run:
@@ -90,9 +102,17 @@ Make sure you have Node.js and npm installed:
        ```
 *   **Production Build**: Compiles optimized production bundle output into `www/`:
     ```bash
+    # Using npm
     npm run build
+
+    # Using yarn
+    yarn build
     ```
 *   **Linting**: Runs TypeScript and template checks:
     ```bash
+    # Using npm
     npm run lint
+
+    # Using yarn
+    yarn lint
     ```
