@@ -85,11 +85,11 @@ Make sure you have Node.js and npm or yarn installed:
     ```
 *   **Testing on Mobile / Local Network**: To open and test the application on another device (such as your mobile phone) connected to the same Wi-Fi network, serve the application binding it to all interfaces:
     ```bash
-    # Using npm/npx
-    npx ionic serve --host=0.0.0.0
+    # Using npm
+    npm run start:host
 
     # Using yarn
-    yarn ionic serve --host=0.0.0.0
+    yarn start:host
     ```
     To access the server from your other device:
     1. Find your host machine's local IP address on the Wi-Fi network. On macOS, run:
